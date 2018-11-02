@@ -1,0 +1,22 @@
+{
+  "name": "ezbus",
+  "version": "1.0.0",
+  "description": "DBMS project",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dvshah/ezbus.git"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "me",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dvshah/ezbus/issues"
+  },
+  "homepage": "https://github.com/dvshah/ezbus#readme"
+}
