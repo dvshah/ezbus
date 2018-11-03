@@ -18,5 +18,14 @@
   "bugs": {
     "url": "https://github.com/dvshah/ezbus/issues"
   },
-  "homepage": "https://github.com/dvshah/ezbus#readme"
+  "homepage": "https://github.com/dvshah/ezbus#readme",
+  "dependencies": {
+    "alert-node": "^1.2.2",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "mysql": "^2.16.0"
+  }
 }
