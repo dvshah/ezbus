@@ -52,14 +52,14 @@ app.get('/login',sessionChecker, function(req, res){
 app.post('/login',urlencodedParser,function(req, res){
     var username = req.body.name;
     var password = req.body.password;
-		database.connection.query('SELECT * FROM USERS WHERE NAME = ?', [username],
+		database.connection.query('SELECT * FROM USERS WHERE username = ?', [username],
 			function(err, rows, fields){
 				if(err)	throw err;
 				else
 				{
 					if(rows.length > 0)
 					{
-						if(rows[0].PASSWORD == password)
+						if(rows[0].password == password)
 						{
 							req.session.user = username;
 							alert('good job!');
@@ -89,7 +89,7 @@ app.post('/register', urlencodedParser, function(req,res){
 	var name = req.body.name;
 	var username = req.body.username;
 	var password = req.body.password;
-	database.connection.query('SELECT * FROM USERS WHERE NAME = ?', [username],
+	database.connection.query('SELECT * FROM USERS WHERE username = ?', [username],
 		function(err, rows, fields){
 			if(err) throw err;
 			else
@@ -101,7 +101,7 @@ app.post('/register', urlencodedParser, function(req,res){
 				}
 				else
 				{
-					database.connection.query('INSERT INTO USERS VALUES (? , ?)',[username,password],
+					database.connection.query('INSERT INTO USERS VALUES (? , ?, ?, ?)',[username,name,password,0],
 						function(err){
 							if(err) throw err;
 							alert('User registered!');
