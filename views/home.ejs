@@ -16,6 +16,20 @@
 			a{
 				margin: 12px;
 			}
+			h2{
+				font-size: 30px; text-transform: uppercase; letter-spacing: 2px; text-align: center;
+			}
+			select{
+				width: 50px;
+			}
+			#date{
+				height: 14px;
+				font-size: 10px;
+				align-items: center;
+			}
+			button{
+				height: 34px;
+			}
 		</style>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<!-- <script src="/login.js"></script> -->
@@ -23,13 +37,30 @@
 
 	<body>
 		<h1>Welcome to EZBUS! <%= name %></h1>
+		<form method="post">
+			<h2>Book a Ticket!</h2>
+			<span>From: </span>
+			<select name="from" required>
+				<% for(var i=0; i< stations.length; i++){ %>
+					<option value="<%= stations[i].stn_name %>"> <%= stations[i].stn_name %> </option>
+				<% } %>
+			</select>
+			<span>To: </span>
+			<select name="to" required>
+				<% for(var i=0; i< stations.length; i++){ %>
+					<option value="<%= stations[i].stn_name %>"> <%= stations[i].stn_name %> </option>
+				<% } %>
+			</select>
+			<span>Date: </span>
+			<input type="date" name="date" id="date" required>
+			<button type="submit" value="submit">Check for Buses!</button>
+		</form>
 		<% if(name){ %>
 				<p><a href="logout">logout!</a></p>
 		<% } %>
 		<% if(!name){ %>
 			<p><a href="register">register!</a><a href="login">login!</a></p>
 		<% } %>
-
 	</body>
 
 </html>

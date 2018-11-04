@@ -101,7 +101,7 @@ app.post('/register', urlencodedParser, function(req,res){
 				}
 				else
 				{
-					database.connection.query('INSERT INTO USERS VALUES (? , ?, ?, ?)',[username,name,password,0],
+					database.connection.query('INSERT INTO USERS VALUES (? , ?, ?, ?)',[username,name,password,1000000],
 						function(err){
 							if(err) throw err;
 							alert('User registered!');
@@ -113,8 +113,40 @@ app.post('/register', urlencodedParser, function(req,res){
 })
 
 app.get('/home', function(req,res){
-	var check = req.session.user;
-	res.render('home',{name: check});
+	var someVar = [];
+
+	database.connection.query("select * from STATION", function(err, rows){
+	  if(err) {
+	    throw err;
+	  } else {
+	    someVar = rows;
+	    console.log();
+		var check = req.session.user;
+		res.render('home',{name: check, stations: someVar});
+	  }
+	});
+})
+
+
+
+app.post('/home', urlencodedParser, function(req,res){
+	//console.log(stations);
+	//alert(stations);
+	console.log(req.body);
+	var from = req.body.from;
+	var to = req.body.to;
+	if(from==to)
+	{
+		alert('starting point and destination cant be same! ');
+		res.redirect('/home');
+	}
+	var date = req.body.date;
+	var year = date.substring(0,4);
+	var month = date.substring(5,7);
+	var day = date.substring(8,10);
+	//console.log(station);
+	res.redirect('/home');
+	//alert(day);
 })
 
 app.get('/logout', function(req,res){
