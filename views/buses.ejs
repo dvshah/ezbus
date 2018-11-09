@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>EZBUS</title>
+		<style type="text/css">
+			body{
+				background-color: skyblue; font-family: verdana; color: white; padding: 30px; text-align: center;
+			}
+			h1{
+				font-size: 50px; text-transform: uppercase; letter-spacing: 2px; text-align: center;
+			}
+			input{
+				padding: 12px 20px; margin: 8px 0;
+			}
+			a{
+				margin: 12px;
+			}
+			h2{
+				font-size: 30px; text-transform: uppercase; letter-spacing: 2px; text-align: center;
+			}
+			select{
+				width: 50px;
+			}
+			#date{
+				height: 14px;
+				font-size: 10px;
+				align-items: center;
+			}
+			button{
+				height: 34px;
+			}
+			ul {
+				display:table; margin:0 auto;
+			}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<!-- <script src="/login.js"></script> -->
+	</head>
+
+	<body>
+		<h1>Available Buses for your Journey: <%= name %></h1>
+		<div>
+			<form method="post" action="buses">
+			<% for(var i=0; i< bus.length; i++){ %>
+					<span>BUS_ID:  <%= bus[i].bus_id %></span>
+					<input type="submit" id="<%= bus[i].bus_id %>" value="Check for seats" onclick="document.forms[0].action+='/'+this.id;return true;"></input>
+			<% } %>
+			</form>
+		</div>
+		<% if(name){ %>
+				<p><a href="logout">logout!</a></p>
+		<% } %>
+		<% if(!name){ %>
+			<p><a href="register">register!</a><a href="login">login!</a></p>
+		<% } %>
+	</body>
+
+</html>
