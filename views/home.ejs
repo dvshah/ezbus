@@ -30,6 +30,21 @@
 			button{
 				height: 34px;
 			}
+			table {
+			    font-family: arial, sans-serif;
+			    border-collapse: collapse;
+			    width: 100%;
+			}
+
+			td, th {
+			    border: 1px solid #dddddd;
+			    text-align: left;
+			    padding: 8px;
+			}
+
+			tr:nth-child(even) {
+			    background-color: #dddddd;
+			}
 		</style>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<!-- <script src="/login.js"></script> -->
@@ -56,7 +71,28 @@
 			<button type="submit" value="submit">Check for Buses!</button>
 		</form>
 		<% if(name){ %>
-				<p><a href="logout">logout!</a></p>
+			<h2>Booking History: </h2>
+			<table>
+				<tr>
+					<th>Seat number</th>
+					<th>Bus name</th>
+					<th>Day</th>
+					<th>Month</th>
+					<th>Year</th>
+					<th>Status</th>
+				</tr>
+				<% for(var i=0; i< rows.length; i++){ %>
+					<tr>
+						<td> <%= rows[i].ticket_id %> </td>
+						<td> <%= rows[i].bus_id %> </td>
+						<td> <%= rows[i].day %> </td>
+						<td> <%= rows[i].month %> </td>
+						<td> <%= rows[i].year %> </td>
+						<td> <a href="#">Cancel booking</a> </td>
+					</tr>
+				<% } %>
+			</table>
+			<p><a href="logout">logout!</a></p>
 		<% } %>
 		<% if(!name){ %>
 			<p><a href="register">register!</a><a href="login">login!</a></p>

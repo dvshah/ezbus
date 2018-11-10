@@ -33,20 +33,26 @@
 			ul {
 				display:table; margin:0 auto;
 			}
+			label,select {
+				display: inline-block;
+				vertical-align: middle;
+			}
 		</style>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<!-- <script src="/login.js"></script> -->
 	</head>
 
 	<body>
-		<h1>Available Buses for your Journey: <%= name %></h1>
+		<h1>Available Seats for your Journey: <%= name %></h1>
 		<div>
-			<form method="post" action="buses">
-			<% for(var i=0; i< bus.length; i++){ %>
-					<span>BUS_ID:  <%= bus[i].bus_id %></span>
-					<input type="submit" id="<%= bus[i].bus_id %>" value="Check for seats" onclick="document.forms[0].action+='/'+this.id;return true;"></input>
-					<br>
-			<% } %>
+			<form method="post">
+				<span>Available Tickets: </span>
+				<select name="ticket" multiple="multiple" required>
+					<% for(var i=0; i< result.length; i++){ %>
+						<option value="<%= result[i] %>"> <%= result[i] %> </option>
+					<% } %>
+				</select>
+				<button value="submit" type="submit"> Book! </button>
 			</form>
 		</div>
 		<% if(name){ %>
