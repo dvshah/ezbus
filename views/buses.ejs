@@ -3,35 +3,39 @@
 
 	<head>
 		<title>EZBUS</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<style type="text/css">
 			body{
-				background-color: skyblue; font-family: verdana; color: white; padding: 30px; text-align: center;
+				background-color: skyblue; font-family: verdana; color: black; padding: 30px; text-align: center;
 			}
 			h1{
-				font-size: 50px; text-transform: uppercase; letter-spacing: 2px; text-align: center;
+				font-size: 50px; text-transform: uppercase; letter-spacing: 2px; text-align: center; padding: 30px 0;
 			}
 			input{
 				padding: 12px 20px; margin: 8px 0;
 			}
-			a{
-				margin: 12px;
-			}
-			h2{
-				font-size: 30px; text-transform: uppercase; letter-spacing: 2px; text-align: center;
-			}
 			select{
-				width: 50px;
-			}
-			#date{
-				height: 14px;
-				font-size: 10px;
-				align-items: center;
+				margin: 8px 0; width: 100px; height: 30px; margin-top: 0px;
 			}
 			button{
-				height: 34px;
+				margin: 8px 0;
 			}
-			ul {
-				display:table; margin:0 auto;
+			table {height: 10vh; 
+			    font-family: arial, sans-serif;
+			    border-collapse: collapse;
+			    width: 100%;
+			}
+
+			td, th {
+			    border: 1px solid #dddddd;
+			    text-align: left;
+			    padding: 8px;
+			}
+
+			tr:nth-child(even) {
+			    background-color: #dddddd;
 			}
 		</style>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -39,22 +43,51 @@
 	</head>
 
 	<body>
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+		  <div class="container-fluid">
+		    <div class="navbar-header">
+		      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span> 
+		      </button>
+		      <a class="navbar-brand" href="home" style="width: 150px; font-size: 30px;">Ezbus</a>
+		    </div>
+		    <div class="collapse navbar-collapse" id="myNavbar">
+		      <ul class="nav navbar-nav">
+		        <li class="active"><a href="home">Home</a></li>
+		      </ul>
+		      <ul class="nav navbar-nav navbar-right">
+		      	<% if(!name){ %>
+		        <li><a href="register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+		        <li><a href="login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+		        <% } %>
+		        <% if(name){ %>
+		        <li><a href="logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+		        <% } %>
+		      </ul>
+		    </div>
+		  </div>
+		</nav>
 		<h1>Available Buses for your Journey: <%= name %></h1>
 		<div>
 			<form method="post" action="buses">
-			<% for(var i=0; i< bus.length; i++){ %>
-					<span>BUS_ID:  <%= bus[i].bus_id %></span>
-					<input type="submit" id="<%= bus[i].bus_id %>" value="Check for seats" onclick="document.forms[0].action+='/'+this.id;return true;"></input>
-					<br>
-			<% } %>
+				<table>
+					<tr>
+						<th>BUS_ID</th>
+						<th>BUS TYPE</th>
+						<th>SEATS</th>
+					</tr>
+				<% for(var i=0; i< bus.length; i++){ %>
+					<tr>
+						<td> <%= bus[i].bus_id %> </td>
+						<td> <%= bus[i].type %> </td>
+						<td> <input type="submit" id="<%= bus[i].bus_id %>" value="Check for seats" onclick="document.forms[0].action+='/'+this.id;return true;"></input> </td>
+					</tr>
+				<% } %>
+				</table>
 			</form>
 		</div>
-		<% if(name){ %>
-				<p><a href="logout">logout!</a></p>
-		<% } %>
-		<% if(!name){ %>
-			<p><a href="register">register!</a><a href="login">login!</a></p>
-		<% } %>
 	</body>
 
 </html>

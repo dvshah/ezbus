@@ -12,7 +12,7 @@ var app = express();
 
 app.set('view engine', 'ejs');
 
-app.use(express.static('./assets'));
+//app.use(express.static('./assets'));
 
 /*app.use(cookieParser());*/
 
@@ -23,7 +23,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 app.use(session({
     key: 'user_sid',
     secret: 'somerandonstuffs',
-    resave: false,
+    resave: true,
     saveUninitialized: false,
 }));
 
@@ -56,7 +56,7 @@ app.get('/', function(req,res){
 
 app.get('/login',sessionChecker, function(req, res){
 	console.log('Connected');
-	res.render('login');
+	res.render('login', {name: req.session.user});
 });
 
 app.post('/login',urlencodedParser,function(req, res){
@@ -72,7 +72,7 @@ app.post('/login',urlencodedParser,function(req, res){
 						if(rows[0].password == password)
 						{
 							req.session.user = username;
-							alert('good job!');
+							//alert('good job!');
 							res.redirect('/home');
 						}
 						else
@@ -92,13 +92,14 @@ app.post('/login',urlencodedParser,function(req, res){
 
 app.get('/register',sessionChecker, function(req, res){
 	//console.log('Connected');
-	res.render('register');
+	res.render('register', {name: req.session.user});
 });
 
 app.post('/register', urlencodedParser, function(req,res){
 	var name = req.body.name;
 	var username = req.body.username;
 	var password = req.body.password;
+	var gender = req.body.gender;
 	database.connection.query('SELECT * FROM USERS WHERE username = ?', [username],
 		function(err, rows, fields){
 			if(err) throw err;
@@ -111,7 +112,7 @@ app.post('/register', urlencodedParser, function(req,res){
 				}
 				else
 				{
-					database.connection.query('INSERT INTO USERS VALUES (? , ?, ?, ?)',[username,name,password,1000000],
+					database.connection.query('INSERT INTO USERS VALUES (? , ?, ?, ?, ?)',[username,name,password,1000000,gender],
 						function(err){
 							if(err) throw err;
 							alert('User registered!');
@@ -148,6 +149,15 @@ app.post('/home', urlencodedParser, function(req,res){
 	//console.log(stations);
 	//alert(stations);
 	//console.log(req.body);
+	if(req.session.buses)
+	{
+		delete req.session.buses;
+		delete req.session.day;
+		delete req.session.month;
+		delete req.session.year;
+	}
+	if(req.session.busid)
+		delete req.session.busid;
 	var from = req.body.from;
 	var to = req.body.to;
 	if(from==to)
@@ -175,12 +185,18 @@ app.post('/home', urlencodedParser, function(req,res){
 		one = one[0].distance;
 		var distance = two-one;
 		console.log("distance ", distance);
+		req.session.way = 1;
 		if(one>two)
+		{
+			req.session.way = 2;
 			distance = distance*-1;
+		}
 		req.session.distance = distance;
 		if(beta>alpha)
 		{
-			var bus = await database.connection.query('SELECT START.bus_id FROM START WHERE START.stn_id<=? AND START.bus_id IN (SELECT DESTINATION.bus_id FROM DESTINATION WHERE DESTINATION.stn_id>=?)', [alpha,beta]);
+			var bus = await database.connection.query('SELECT * FROM(SELECT * FROM (SELECT start_stn_id, start.bus_id, start.route, destination_stn_id from START as start inner join DESTINATION as destination on(start.bus_id = destination.bus_id and start.route = destination.route) ) as my WHERE start_stn_id<=? AND destination_stn_id>=?) AS ROUTES inner join BUSES ON ROUTES.bus_id = BUSES.bus_id', [alpha,beta]);
+			console.log(bus);
+			//var bus = await database.connection.query('SELECT * FROM BUSES WHERE bus_id IN (SELECT START.bus_id FROM START WHERE START.stn_id<=? AND START.bus_id IN (SELECT DESTINATION.bus_id FROM DESTINATION WHERE DESTINATION.stn_id>=?))', [alpha,beta]);
 			if(bus.length == 0)
 			{
 				alert('NO BUSES!');
@@ -189,6 +205,7 @@ app.post('/home', urlencodedParser, function(req,res){
 			else
 			{
 				req.session.buses = bus;
+				//console.log(bus[0].bus_id);
 				req.session.day = day;
 				req.session.month = month;
 				req.session.year = year;
@@ -197,7 +214,8 @@ app.post('/home', urlencodedParser, function(req,res){
 		}
 		else
 		{
-			var bus = await database.connection.query('SELECT START.bus_id FROM START WHERE START.stn_id<=? AND START.bus_id IN (SELECT DESTINATION.bus_id FROM DESTINATION WHERE DESTINATION.stn_id>=?)', [beta, alpha]);
+			var bus = await database.connection.query('SELECT * FROM(SELECT * FROM (SELECT start_stn_id, start.bus_id, start.route, destination_stn_id from START as start inner join DESTINATION as destination on(start.bus_id = destination.bus_id and start.route = destination.route) ) as my WHERE start_stn_id>=? AND destination_stn_id<=?) AS ROUTES inner join BUSES ON ROUTES.bus_id = BUSES.bus_id', [alpha,beta]);
+			//var bus = await database.connection.query('SELECT * FROM BUSES WHERE bus_id IN (SELECT START.bus_id FROM START WHERE START.stn_id<=? AND START.bus_id IN (SELECT DESTINATION.bus_id FROM DESTINATION WHERE DESTINATION.stn_id>=?))', [beta, alpha]);
 			if(bus.length == 0)
 			{
 				alert('NO BUSES!');
@@ -223,9 +241,26 @@ app.get('/logout', function(req,res){
 	res.redirect('/home');
 });
 
+app.get('/delete/:id', function(req,res){
+	console.log(req.params.id);
+	if(!req.session.user)
+		res.redirect('/home');
+	database.connection.query('SELECT username FROM BOOKING_HISTORY WHERE booking_id = ?', [req.params.id], function(err, rows,fields){
+		if(err) throw err;
+		if(rows.length==0 || rows[0].username!=req.session.user)
+			res.redirect('/home');
+		database.connection.query('DELETE FROM BOOKING_HISTORY WHERE booking_id = ?', [req.params.id], function(err){
+			if(err) throw err;
+		})
+	})
+	res.redirect('/home');
+})
+
 app.get('/buses', function(req,res){
 	if(!req.session.buses)
 		res.redirect('/home');
+	if(req.session.busid)
+		delete req.session.busid;
 	res.render('buses', {bus: req.session.buses, name: req.session.user});
 });
 
@@ -241,7 +276,7 @@ app.get('/seats', function(req, res){
 		res.redirect('/buses');
 	if(!req.session.busid && !req.session.buses)
 		res.redirect('/home');
-	database.connection.query('SELECT ticket_id FROM BOOKING_HISTORY WHERE bus_id = ? AND day = ? AND month = ? AND year = ?', [req.session.busid, req.session.day, req.session.month, req.session.year], function(err, rows, fields){
+	database.connection.query('SELECT ticket_id FROM BOOKING_HISTORY WHERE bus_id = ? AND day = ? AND month = ? AND year = ? AND way = ?', [req.session.busid, req.session.day, req.session.month, req.session.year, req.session.way], function(err, rows, fields){
 		if(err) throw err;
 		else
 		{
@@ -288,7 +323,7 @@ app.post('/seats', checker, urlencodedParser, function(req, res){
 					console.log("check");
 					for(var i=0; i<ticket.length; i++)
 					{
-						var x = await database.connection.query('INSERT INTO BOOKING_HISTORY VALUES (?,?,?,?,?,?)', [req.session.busid, req.session.day, req.session.month, req.session.year, ticket[i], req.session.user]);
+						var x = await database.connection.query('INSERT INTO BOOKING_HISTORY VALUES (?,?,?,?,?,?,?,NULL)', [req.session.busid, req.session.day, req.session.month, req.session.year, ticket[i], req.session.user, req.session.way]);
 					}
 					console.log('this is so sad');
 					var y = await database.connection.query('UPDATE USERS SET wallet_balance = ? WHERE username = ?', [wallet_balance-price, req.session.user]);

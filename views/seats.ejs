@@ -3,32 +3,24 @@
 
 	<head>
 		<title>EZBUS</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<style type="text/css">
 			body{
-				background-color: skyblue; font-family: verdana; color: white; padding: 30px; text-align: center;
+				background-color: skyblue; font-family: verdana; color: black; padding: 30px; text-align: center;
 			}
 			h1{
-				font-size: 50px; text-transform: uppercase; letter-spacing: 2px; text-align: center;
+				font-size: 50px; text-transform: uppercase; letter-spacing: 2px; text-align: center; padding: 30px 0;
 			}
 			input{
 				padding: 12px 20px; margin: 8px 0;
 			}
-			a{
-				margin: 12px;
-			}
-			h2{
-				font-size: 30px; text-transform: uppercase; letter-spacing: 2px; text-align: center;
-			}
 			select{
-				width: 50px;
-			}
-			#date{
-				height: 14px;
-				font-size: 10px;
-				align-items: center;
+				margin: 8px 0; width: 100px; height: 30px; margin-top: 0px;
 			}
 			button{
-				height: 34px;
+				margin: 8px 0;
 			}
 			ul {
 				display:table; margin:0 auto;
@@ -43,24 +35,44 @@
 	</head>
 
 	<body>
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+		  <div class="container-fluid">
+		    <div class="navbar-header">
+		      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span> 
+		      </button>
+		      <a class="navbar-brand" href="home" style="width: 150px; font-size: 30px;">Ezbus</a>
+		    </div>
+		    <div class="collapse navbar-collapse" id="myNavbar">
+		      <ul class="nav navbar-nav">
+		        <li class="active"><a href="home">Home</a></li>
+		      </ul>
+		      <ul class="nav navbar-nav navbar-right">
+		      	<% if(!name){ %>
+		        <li><a href="register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+		        <li><a href="login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+		        <% } %>
+		        <% if(name){ %>
+		        <li><a href="logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+		        <% } %>
+		      </ul>
+		    </div>
+		  </div>
+		</nav>
 		<h1>Available Seats for your Journey: <%= name %></h1>
 		<div>
-			<form method="post">
-				<span>Available Tickets: </span>
+			<form method="post" style="text-align: center;">
+				<span style="font-size: 20px; padding: 0 20px;">Available Tickets: </span>
 				<select name="ticket" multiple="multiple" required>
 					<% for(var i=0; i< result.length; i++){ %>
 						<option value="<%= result[i] %>"> <%= result[i] %> </option>
 					<% } %>
 				</select>
-				<button value="submit" type="submit"> Book! </button>
+				<button value="submit" type="submit" style="margin: 0 20px;"> Book! </button>
 			</form>
 		</div>
-		<% if(name){ %>
-				<p><a href="logout">logout!</a></p>
-		<% } %>
-		<% if(!name){ %>
-			<p><a href="register">register!</a><a href="login">login!</a></p>
-		<% } %>
 	</body>
 
 </html>
