@@ -8,16 +8,7 @@ var connection = mysql.createPool({
 	password: 'devansh123'
 });
 
-/*connection.connect(function(err){
-	if(!err){
-		console.log('Connected');
-	}
-	else
-	{
-		console.log('FUCK!!!!!');
-	}
-});
-*/
+
 connection.query = util.promisify(connection.query);
 
 module.exports.connection = connection;
